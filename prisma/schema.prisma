@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum QuestionStatus {
+  APPROVED
+  REJECTED
+  PENDING
+}
+
+enum CategoryEnum {
+  SPORTS
+  FINANCE
+  HISTORY
+  GEOGRAPHY
+}
+
+model Catalogue {
+  id          String       @id @default(uuid())
+  category    CategoryEnum
+  title       String
+  description String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt // 
+  Question    Question[]
+}
+
+model Question {
+  id            String         @id @default(uuid())
+  catalogueId   String         @map("catalogue_id")
+  question      String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctOption String
+  topic         String
+  status        QuestionStatus
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  Catalogue Catalogue @relation(fields: [catalogueId], references: [id], onDelete: Cascade)
+}

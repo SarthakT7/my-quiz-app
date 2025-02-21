@@ -16,7 +16,7 @@ interface Catalogue {
   createdAt: string;
 }
 
-export default function Home() {
+export default function AdminDashboard() {
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,8 +68,8 @@ export default function Home() {
                     <div className="mt-2 h-24 overflow-hidden text-ellipsis line-clamp-4">
                       {catalogue.description}
                     </div>
-                    <Link href={`/catalogues/${catalogue.id}/quiz`}>
-                      <Button className="mt-4 w-full">Take the quiz</Button>
+                    <Link href={`/admin/catalogues/${catalogue.id}/questions`}>
+                      <Button className="mt-4 w-full">View Questions</Button>
                     </Link>
                   </CardContent>
                 </Card>
