@@ -7,12 +7,14 @@ import { z } from "zod";
 const answerSchema = z.array(
   z.object({
     question_id: z.string().uuid(),
-    answer: z.enum([
-      Option.OPTION_A,
-      Option.OPTION_B,
-      Option.OPTION_C,
-      Option.OPTION_D,
-    ]),
+    answer: z.nullable(
+      z.enum([
+        Option.OPTION_A,
+        Option.OPTION_B,
+        Option.OPTION_C,
+        Option.OPTION_D,
+      ])
+    ),
   })
 );
 
@@ -24,6 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<any> }) {
   try {
     const body = await req.json();
     const { catalogueId } = await params;
+
     const validatedResult = answerSchema.safeParse(body);
 
     if (!validatedResult.success) {
@@ -39,7 +42,13 @@ export async function POST(req: Request, { params }: { params: Promise<any> }) {
       },
     });
 
-    return calculateScore(catalogueId, correctAnswers, validatedResult.data);
+    const response = calculateScore(
+      catalogueId,
+      correctAnswers,
+      validatedResult.data
+    );
+
+    return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create catalogue." },

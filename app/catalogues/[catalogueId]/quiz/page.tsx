@@ -5,27 +5,31 @@ import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { getQuestions } from "@/lib/api";
-import { useParams } from "next/navigation";
+import { UserAnswer } from "@/interfaces/UserAnswer";
+import { getQuestions, submitQuiz } from "@/lib/api";
+import { Question } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface Question {
-  id: string;
-  question: string;
-  optionA: string;
-  optionB: string;
-  optionC: string;
-  optionD: string;
-  correctOption: string;
-  status: string;
-}
-
 export default function QuizPage() {
   const { catalogueId } = useParams();
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<any>({});
+  const [answers, setAnswers] = useState<UserAnswer[]>([]); // Initialize as empty
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const router = useRouter();
+
+  const handleSubmit = async () => {
+    try {
+      if (!catalogueId || Array.isArray(catalogueId) || !answers) return;
+      const response = await submitQuiz(catalogueId, answers);
+      toast({ title: "Success", description: "Quiz submitted successfully!" });
+
+      localStorage.setItem("quizResults", JSON.stringify(response));
+      router.push(`/catalogues/${catalogueId}/quiz/result`);
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to submit quiz." });
+    }
+  };
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -33,6 +37,13 @@ export default function QuizPage() {
         if (!catalogueId || Array.isArray(catalogueId)) return;
         const data = await getQuestions(catalogueId);
         setQuestions(data);
+
+        // Initialize answers based on questions
+        const initialAnswers: UserAnswer[] = data.map((question: Question) => ({
+          question_id: question.id,
+          answer: null,
+        }));
+        setAnswers(initialAnswers);
       } catch (error) {
         toast({ title: "Error", description: "Failed to load questions." });
       } finally {
@@ -43,7 +54,13 @@ export default function QuizPage() {
   }, [catalogueId, toast]);
 
   const handleSelect = (questionId: string, option: string) => {
-    setAnswers((prev: any) => ({ ...prev, [questionId]: option }));
+    const updatedAnswers = answers.map((answerObj) => {
+      if (answerObj.question_id === questionId) {
+        return { ...answerObj, answer: option } as UserAnswer;
+      }
+      return answerObj;
+    });
+    setAnswers(updatedAnswers);
   };
 
   return (
@@ -62,28 +79,29 @@ export default function QuizPage() {
               <p className="font-semibold mb-2">{q.question}</p>
               <RadioGroup
                 onValueChange={(value: any) => handleSelect(q.id, value)}
-                value={answers[q.id] || ""}
               >
                 <div key="A" className="flex items-center space-x-2">
-                  <RadioGroupItem value={q.optionA} id={q.id + "A"} />
+                  <RadioGroupItem value={"Option A"} id={q.id + "A"} />
                   <label htmlFor={q.id + "A"}>{q.optionA}</label>
                 </div>
                 <div key="B" className="flex items-center space-x-2">
-                  <RadioGroupItem value={q.optionB} id={q.id + "B"} />
+                  <RadioGroupItem value={"Option B"} id={q.id + "B"} />
                   <label htmlFor={q.id + "B"}>{q.optionB}</label>
                 </div>{" "}
                 <div key="C" className="flex items-center space-x-2">
-                  <RadioGroupItem value={q.optionC} id={q.id + "C"} />
+                  <RadioGroupItem value={"Option C"} id={q.id + "C"} />
                   <label htmlFor={q.id + "C"}>{q.optionC}</label>
                 </div>{" "}
                 <div key="D" className="flex items-center space-x-2">
-                  <RadioGroupItem value={q.optionD} id={q.id + "D"} />
+                  <RadioGroupItem value={"Option D"} id={q.id + "D"} />
                   <label htmlFor={q.id + "D"}>{q.optionD}</label>
                 </div>
               </RadioGroup>
             </Card>
           ))}
-          <Button className="w-full mt-4">Submit</Button>
+          <Button onClick={handleSubmit} className="w-full mt-4">
+            Submit
+          </Button>
         </div>
       )}
     </div>

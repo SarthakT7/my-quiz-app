@@ -1,3 +1,6 @@
+import { AnswerSheet } from "@/interfaces/AnswerSheet";
+import { UserAnswer } from "@/interfaces/UserAnswer";
+
 export async function getCatalogues() {
   const response = await fetch("/api/catalogues");
   if (!response.ok) throw new Error("Failed to fetch catalogues");
@@ -43,6 +46,20 @@ export async function approveQuestion(
       body: JSON.stringify({ approve }),
     }
   );
+
+  if (!response.ok) throw new Error("Failed to approve question");
+  return response.json();
+}
+
+export async function submitQuiz(
+  catalogueId: string,
+  userAnswers: UserAnswer[]
+): Promise<AnswerSheet> {
+  const response = await fetch(`/api/catalogues/${catalogueId}/quiz/submit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userAnswers),
+  });
 
   if (!response.ok) throw new Error("Failed to approve question");
   return response.json();

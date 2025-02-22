@@ -1,14 +1,12 @@
 import { AnswerSheet } from "@/interfaces/AnswerSheet";
+import { Question } from "@/interfaces/Question";
+import { UserAnswer } from "@/interfaces/UserAnswer";
 import { Option } from "@/types/Option";
-import { Question } from "@prisma/client";
 
 export function calculateScore(
   catalogueId: string,
   correctAnswers: Question[],
-  userAnswers: {
-    question_id: string;
-    answer: Option;
-  }[]
+  userAnswers: UserAnswer[]
 ): AnswerSheet {
   let answerSheet: AnswerSheet = {
     catalogueId: catalogueId,
@@ -21,15 +19,12 @@ export function calculateScore(
     const correctAnswer = correctAnswers.find(
       (c) => c.id === userAnswer.question_id
     );
-
-    if (correctAnswer?.correctOption === userAnswer.answer) {
+    if (userAnswer.answer && correctAnswer?.correctOption === userAnswer.answer)
       answerSheet.score += 1;
-      answerSheet.answers.push({
-        correct_choice: correctAnswer.correctOption,
-        questionId: userAnswer.question_id,
-        user_choice: userAnswer.answer,
-      });
-    }
+    answerSheet.answers.push({
+      user_choice: userAnswer.answer as Option,
+      question: correctAnswer!,
+    });
   }
 
   return answerSheet;
