@@ -61,6 +61,6 @@ export async function submitQuiz(
     body: JSON.stringify(userAnswers),
   });
 
-  if (!response.ok) throw new Error("Failed to approve question");
+  if (!response.ok) throw new Error("Failed to submit quiz.");
   return response.json();
 }

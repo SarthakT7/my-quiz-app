@@ -51,7 +51,7 @@ export async function POST(req: Request, { params }: { params: Promise<any> }) {
     return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create catalogue." },
+      { error: "Failed to submit quiz." },
       { status: 500 }
     );
   }

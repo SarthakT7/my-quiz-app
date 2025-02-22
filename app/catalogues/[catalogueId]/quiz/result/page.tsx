@@ -21,7 +21,8 @@ export default function QuizResultsPage() {
         const results = localStorage.getItem("quizResults");
         if (!results) return;
         setResults(JSON.parse(results) as AnswerSheet);
-      } catch (error) {
+        localStorage.removeItem("quizResults");
+      } catch (_) {
         toast({ title: "Error", description: "Failed to load results." });
       } finally {
         setLoading(false);
@@ -94,7 +95,10 @@ export default function QuizResultsPage() {
         })}
       </div>
 
-      <Button className="w-full mt-4" onClick={() => router.push(`/catalogues/${catalogueId}/quiz`)}>
+      <Button
+        className="w-full mt-4"
+        onClick={() => router.push(`/catalogues/${catalogueId}/quiz`)}
+      >
         Retry Quiz
       </Button>
     </div>

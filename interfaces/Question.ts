@@ -1,3 +1,5 @@
+import { QuestionStatus } from "@prisma/client";
+
 export interface Question {
   id: string;
   question: string;
@@ -6,5 +8,5 @@ export interface Question {
   optionC: string;
   optionD: string;
   correctOption: string;
-  status: string;
+  status: QuestionStatus;
 }

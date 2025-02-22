@@ -7,6 +7,6 @@ export interface AnswerSheet {
   total: number;
   answers: {
     question: Question;
-    user_choice: Option;
+    user_choice: Option | null;
   }[];
 }

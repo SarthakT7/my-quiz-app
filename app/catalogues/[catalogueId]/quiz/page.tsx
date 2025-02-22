@@ -26,7 +26,7 @@ export default function QuizPage() {
 
       localStorage.setItem("quizResults", JSON.stringify(response));
       router.push(`/catalogues/${catalogueId}/quiz/result`);
-    } catch (error) {
+    } catch (_) {
       toast({ title: "Error", description: "Failed to submit quiz." });
     }
   };
@@ -78,7 +78,7 @@ export default function QuizPage() {
             <Card key={q.id} className="p-4">
               <p className="font-semibold mb-2">{q.question}</p>
               <RadioGroup
-                onValueChange={(value: any) => handleSelect(q.id, value)}
+                onValueChange={(value: string) => handleSelect(q.id, value)}
               >
                 <div key="A" className="flex items-center space-x-2">
                   <RadioGroupItem value={"Option A"} id={q.id + "A"} />

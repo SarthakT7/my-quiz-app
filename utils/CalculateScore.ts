@@ -19,11 +19,15 @@ export function calculateScore(
     const correctAnswer = correctAnswers.find(
       (c) => c.id === userAnswer.question_id
     );
+
+    if (!correctAnswer) {
+      throw new Error(`Question ${userAnswer.question_id} not found`);
+    }
     if (userAnswer.answer && correctAnswer?.correctOption === userAnswer.answer)
       answerSheet.score += 1;
     answerSheet.answers.push({
       user_choice: userAnswer.answer as Option,
-      question: correctAnswer!,
+      question: correctAnswer
     });
   }
 
