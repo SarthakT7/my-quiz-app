@@ -7,6 +7,16 @@ import { AnswerSheet } from "@/interfaces/AnswerSheet";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/**
+ * Displays the quiz results page.
+ *
+ * This component retrieves quiz results from local storage using a catalogue identifier
+ * obtained from the URL parameters. While the results are loading, it displays a loading message.
+ * If no results are found or an error occurs during fetching, it renders an appropriate message
+ * and displays a toast notification, respectively. When results are available, it shows the quiz
+ * score along with detailed answer cards for each question, highlighting both the user's answer
+ * and the correct one. A retry button is provided to navigate back to the quiz.
+ */
 export default function QuizResultsPage() {
   const { catalogueId } = useParams();
   const [results, setResults] = useState<AnswerSheet>({} as AnswerSheet);
