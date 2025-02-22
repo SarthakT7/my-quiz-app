@@ -10,6 +10,14 @@ import { getQuestions, submitQuiz } from "@/lib/api";
 import { Question } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+/**
+ * Renders the quiz page allowing users to answer quiz questions.
+ *
+ * This component retrieves quiz questions based on the catalogue ID from the URL, initializes the answer state for each question,
+ * and displays each question with its corresponding radio button options. When the user submits the quiz, it sends the answers
+ * to the server, stores the results locally, and redirects to the results page. A loading skeleton is shown while questions are being fetched,
+ * and error messages are displayed via toast notifications if any API call fails.
+ */
 export default function QuizPage() {
   const { catalogueId } = useParams();
   const [questions, setQuestions] = useState<Question[]>([]);

@@ -20,7 +20,16 @@ const answerSchema = z.array(
 
 const prisma = new PrismaClient();
 
-// Submit Quiz
+/**
+ * Handles the submission of quiz answers.
+ *
+ * This function parses the request's JSON payload, validates the answers against a predefined schema, and retrieves
+ * the correct answers for the quiz associated with the provided catalogueId route parameter. It calculates the quiz score
+ * using the validated input and returns the result as a JSON response. If the validation fails, it responds with a 400 status
+ * and detailed error information; if an unexpected error occurs during processing, it responds with a 500 status and a generic error message.
+ *
+ * @returns A JSON response containing the calculated score or error details.
+ */
 
 export async function POST(req: Request, { params }: { params: Promise<any> }) {
   try {
