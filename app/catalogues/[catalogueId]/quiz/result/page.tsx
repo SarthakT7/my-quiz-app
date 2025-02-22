@@ -19,7 +19,11 @@ export default function QuizResultsPage() {
       try {
         if (!catalogueId || Array.isArray(catalogueId)) return;
         const results = localStorage.getItem("quizResults");
-        if (!results) return;
+
+        if (!results) {
+          router.push(`/catalogues/${catalogueId}/quiz`);
+          return;
+        }
         setResults(JSON.parse(results) as AnswerSheet);
         localStorage.removeItem("quizResults");
       } catch (_) {

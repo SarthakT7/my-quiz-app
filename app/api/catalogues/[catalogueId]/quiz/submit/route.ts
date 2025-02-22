@@ -22,7 +22,10 @@ const prisma = new PrismaClient();
 
 // Submit Quiz
 
-export async function POST(req: Request, { params }: { params: Promise<any> }) {
+export async function POST(
+  req: Request,
+  { params }: { params: { catalogueId: string } }
+) {
   try {
     const body = await req.json();
     const { catalogueId } = await params;
